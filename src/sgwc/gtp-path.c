@@ -78,6 +78,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
     char* staticip = "172.30.164.0";
     ogs_ip_t ip;
         ogs_ipv4_from_string(&ip.addr,staticip);
+        ip.len = 4;
         ip.ipv4 = 1;      
         ip.ipv6 = 0;
     
