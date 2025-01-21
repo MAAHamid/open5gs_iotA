@@ -97,7 +97,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
         char *ip = OGS_ADDR(&from, frombuf);
         ogs_debug("**N2**gnode ip: %s*****", ip);
         if(strcmp(ip, "10.131.2.230")== 0){
-            ogs_debug("****TRUE*****", ip);
+            ogs_debug("****TRUE*****");
             e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
             ogs_assert(e);
             e->gnode = gnode;
