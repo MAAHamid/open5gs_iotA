@@ -74,7 +74,14 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   However in this case, the cause code shall not be set to
      *   "Context not found".
      */
+    ogs_sockaddr_t afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
+    char *ip = OGS_ADDR(&from, frombuf);
+    if(strcmp(ip, "172.25.19.100")== 0){
+       ogs_debug("***1ST IP  %s*****",ip);
+       afrom = from;  
+    }
+ 
     ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf));
     if (gnode) {
         ogs_debug("***Found gnode ***,S5C event");
@@ -96,17 +103,23 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
         }
         char *ip = OGS_ADDR(&from, frombuf);
         ogs_debug("**N2**gnode ip: %s*****", ip);
-        if(strcmp(ip, "10.131.2.230")== 0){
+        if(strcmp(ip, "10.131.3.35")== 0){
             ogs_debug("****TRUE*****");
-            e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+            gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
+           if (gnode) {
+                ogs_debug("***Found gnode with 2nd ip ***,S5C event");
+                e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+                ogs_assert(e);
+                e->gnode = gnode;
+                 }
+        } else {
+            ogs_debug("****FALSE*****");
+            e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
             ogs_assert(e);
             e->gnode = gnode;
         }
-        e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
-        ogs_assert(e);
-        e->gnode = gnode;
+ 
     }
-
     e->pkbuf = pkbuf;
 
     rv = ogs_queue_push(ogs_app()->queue, e);
