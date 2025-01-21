@@ -76,9 +76,9 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      */
     ogs_sockaddr_t afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
-    char *ip = OGS_ADDR(&from, frombuf);
-    if(strcmp(ip, "172.25.19.100")== 0){
-       ogs_debug("***1ST IP  %s*****",ip);
+    char *ip1 = OGS_ADDR(&from, frombuf);
+    if(strcmp(ip1, "172.25.19.100")== 0){
+       ogs_debug("***1ST IP  %s*****",ip1);
        afrom = from;  
     }
  
