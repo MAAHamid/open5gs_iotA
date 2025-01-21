@@ -75,11 +75,18 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   "Context not found".
      */
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
+    ogs_debug("******************gnode ip******************: %s", OGS_ADDR(&from, frombuf));
     if (gnode) {
+        ogs_debug("*********Found gnode *********,S5C event");
+        e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+        ogs_assert(e);
+        e->gnode = gnode;
+    } else if (OGS_ADDR(&from, frombuf) == "10.128.2.230"){
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
     } else {
+        ogs_debug("*********Found gnode *********,s11 event");
         gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->mme_s11_list, &from);
         if (!gnode) {
             gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
