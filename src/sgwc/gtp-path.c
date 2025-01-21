@@ -74,51 +74,53 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   However in this case, the cause code shall not be set to
      *   "Context not found".
      */
-    ogs_sockaddr_t afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
-    char *ip1 = OGS_ADDR(&from, frombuf);
-    if(strcmp(ip1, "172.25.19.100")== 0){
-       ogs_debug("***1ST IP  %s*****",ip1);
-       afrom = from;  
-    }
- 
+    char* staticip = "172.30.164.0";
+    ogs_ip_t ip;
+        ogs_ipv4_from_string(&ip.addr,staticip);
+        ip.ipv4 = 1;      
+        ip.ipv6 = 0;
+    
     ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf));
+    
     if (gnode) {
-        ogs_debug("***Found gnode ***,S5C event");
+        ogs_debug("***Found gnode ***, S5C event");
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
     } else {
-        ogs_debug("***CANOT Find gnode ***,s11 event");
+        ogs_debug("***CANNOT Find gnode ***, S11 event");
         gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->mme_s11_list, &from);
+    
         if (!gnode) {
             gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
             if (!gnode) {
                 ogs_error("Failed to create new gnode(%s:%u), mempool full, ignoring msg!",
-                          OGS_ADDR(&from, frombuf), OGS_PORT(&from));
+                        OGS_ADDR(&from, frombuf), OGS_PORT(&from));
                 ogs_pkbuf_free(pkbuf);
                 return;
             }
             gnode->sock = data;
         }
+    
         char *ip = OGS_ADDR(&from, frombuf);
         ogs_debug("**N2**gnode ip: %s*****", ip);
-        if(strcmp(ip, "10.131.3.35")== 0){
+    
+        if (strcmp(ip, "10.131.2.230") == 0) {
             ogs_debug("****TRUE*****");
-            gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
-           if (gnode) {
-                ogs_debug("***Found gnode with 2nd ip ***,S5C event");
+            gnode = ogs_gtp_node_find_by_ip(&sgwc_self()->pgw_s5c_list,&ip);
+            if (gnode) {
+                ogs_debug("***Found gnode with 2nd ip ***, S5C event");
                 e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
                 ogs_assert(e);
                 e->gnode = gnode;
-                 }
+            }
         } else {
             ogs_debug("****FALSE*****");
             e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
             ogs_assert(e);
             e->gnode = gnode;
         }
- 
     }
     e->pkbuf = pkbuf;
 
