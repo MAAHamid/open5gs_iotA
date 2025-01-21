@@ -81,10 +81,6 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
-    } else if (OGS_ADDR(&from, frombuf) == "10.131.2.230"){
-        e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
-        ogs_assert(e);
-        e->gnode = gnode;
     } else {
         ogs_debug("***CANOT Find gnode ***,s11 event");
         gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->mme_s11_list, &from);
@@ -97,6 +93,14 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
                 return;
             }
             gnode->sock = data;
+        }
+        char *ip = OGS_ADDR(&from, frombuf);
+        ogs_debug("**N2**gnode ip: %s*****", ip);
+        if(strcmp(ip, "10.131.2.230")== 0){
+            ogs_debug("****TRUE*****", ip);
+            e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+            ogs_assert(e);
+            e->gnode = gnode;
         }
         e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
         ogs_assert(e);
