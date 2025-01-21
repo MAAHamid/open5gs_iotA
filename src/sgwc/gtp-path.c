@@ -81,7 +81,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
-    } if else (OGS_ADDR(&from, frombuf) == "10.131.2.230"){
+    } else if (OGS_ADDR(&from, frombuf) == "10.131.2.230"){
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
