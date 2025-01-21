@@ -75,7 +75,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   "Context not found".
      */
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
-    char* staticip = "172.30.164.0";
+    const char* staticip = "172.30.164.0";
     ogs_ip_t ip;
         ogs_ipv4_from_string(&ip.addr,staticip);
         ip.len = 4;
