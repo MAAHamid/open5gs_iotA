@@ -79,11 +79,11 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
     
-    char *ip1 = OGS_ADDR(&from, frombuf);
-    if(strcmp(ip1, "172.30.164.0")== 0){
-       ogs_debug("***1ST IP  %s*****",ip1);
-       afrom = &from;  
-    }
+    // char *ip1 = OGS_ADDR(&from, frombuf);
+    // if(strcmp(ip1, "172.30.164.0")== 0){
+    //    ogs_debug("***1ST IP  %s*****",ip1);
+    //    afrom = from;  
+    // }
     ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf)); 
 
     if (gnode) {
@@ -98,7 +98,13 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
             char *ip = OGS_ADDR(&from, frombuf);
             if(strcmp(ip, "10.131.3.35")== 0){
                 ogs_debug("***CANOT Find gnode in MME List ***,inside IP");
-                gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, afrom);
+                const char *ip_string = "172.30.86.98";
+                ogs_ip_t ip_object;
+                memset(&ip_object, 0, sizeof(ogs_ip_t));
+                ogs_ipv4_from_string(&ip_object.addr, ip_string);
+                ip_object.ipv4 = 1;
+                gnode = ogs_gtp_node_find_by_ip(&sgwc_self()->pgw_s5c_list, &ip_object);
+                // gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
                 if (gnode) {
                     ogs_debug("***CANOT Find gnode in MME List ***,inside IP and found gnode");
                     e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
