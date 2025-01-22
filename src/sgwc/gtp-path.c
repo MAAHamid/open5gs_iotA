@@ -74,56 +74,57 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   However in this case, the cause code shall not be set to
      *   "Context not found".
      */
+     
+    ogs_sockaddr_t afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
-    const char* staticip = "172.30.164.0";
-    ogs_ip_t ip;
-        ogs_ipv4_from_string(&ip.addr,staticip);
-        ip.len = 4;
-        ip.ipv4 = 1;      
-        ip.ipv6 = 0;
     
-    ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf));
-    
+    char *ip1 = OGS_ADDR(&from, frombuf);
+    if(strcmp(ip1, "172.30.164.0")== 0){
+       ogs_debug("***1ST IP  %s*****",ip1);
+       afrom = from;  
+    }
+    ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf)); 
+
     if (gnode) {
-        ogs_debug("***Found gnode ***, S5C event");
+        ogs_debug("***Found gnode in PGW List ***,Will set event to S5");
         e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
         ogs_assert(e);
         e->gnode = gnode;
     } else {
-        ogs_debug("***CANNOT Find gnode ***, S11 event");
+        ogs_debug("***CANOT Find gnode in PGW List ***,will Search in MME list");
         gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->mme_s11_list, &from);
-    
         if (!gnode) {
-            gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
-            if (!gnode) {
-                ogs_error("Failed to create new gnode(%s:%u), mempool full, ignoring msg!",
-                        OGS_ADDR(&from, frombuf), OGS_PORT(&from));
-                ogs_pkbuf_free(pkbuf);
-                return;
-            }
-            gnode->sock = data;
-        }
-    
-        char *ip = OGS_ADDR(&from, frombuf);
-        ogs_debug("**N2**gnode ip: %s*****", ip);
-    
-        if (strcmp(ip, "10.131.3.35") == 0) {
-            ogs_debug("****TRUE*****");
-            // gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
-            gnode = ogs_gtp_node_find_by_ip(&sgwc_self()->pgw_s5c_list,(ogs_ip_t *) &ip);
-            if (gnode) {
-                ogs_debug("***Found gnode with 2nd ip ***, S5C event");
-                e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+            char *ip = OGS_ADDR(&from, frombuf);
+            if(strcmp(ip, "10.131.3.35")== 0){
+                ogs_debug("***CANOT Find gnode in MME List ***,inside IP")
+                gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
+                if (gnode) {
+                    e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
+                    ogs_assert(e);
+                    e->gnode = gnode;
+                }
+            }else{
+                gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
+                ogs_debug("***CANOT Find gnode in MME List ***,will Create a node MME list");
+                if (!gnode) {
+                    ogs_error("Failed to create new gnode(%s:%u), mempool full, ignoring msg!",
+                            OGS_ADDR(&from, frombuf), OGS_PORT(&from));
+                    ogs_pkbuf_free(pkbuf);
+                    return;
+                }
+                gnode->sock = data;
+                e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
                 ogs_assert(e);
                 e->gnode = gnode;
             }
-        } else {
-            ogs_debug("****FALSE*****");
+        }else{
+            ogs_debug("***Find gnode in MME List ***");
             e = sgwc_event_new(SGWC_EVT_S11_MESSAGE);
             ogs_assert(e);
             e->gnode = gnode;
         }
     }
+
     e->pkbuf = pkbuf;
 
     rv = ogs_queue_push(ogs_app()->queue, e);
