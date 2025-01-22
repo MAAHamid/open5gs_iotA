@@ -75,7 +75,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   "Context not found".
      */
      
-    ogs_sockaddr_t afrom;
+    ogs_sockaddr_t *afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
     
     char *ip1 = OGS_ADDR(&from, frombuf);
@@ -99,9 +99,12 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
                 ogs_debug("***CANOT Find gnode in MME List ***,inside IP");
                 gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
                 if (gnode) {
+                    ogs_debug("***CANOT Find gnode in MME List ***,inside IP and found gnode");
                     e = sgwc_event_new(SGWC_EVT_S5C_MESSAGE);
                     ogs_assert(e);
                     e->gnode = gnode;
+                } else {
+                    ogs_debug("***CANOT Find gnode in MME List ***,inside IP and can not found gnode");
                 }
             }else{
                 gnode = ogs_gtp_node_add_by_addr(&sgwc_self()->mme_s11_list, &from);
