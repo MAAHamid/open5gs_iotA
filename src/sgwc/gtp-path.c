@@ -81,7 +81,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
     char *ip1 = OGS_ADDR(&from, frombuf);
     if(strcmp(ip1, "172.30.164.0")== 0){
        ogs_debug("***1ST IP  %s*****",ip1);
-       afrom = from;  
+       afrom = &from;  
     }
     ogs_debug("****gnode ip: %s*****", OGS_ADDR(&from, frombuf)); 
 
