@@ -144,6 +144,7 @@ void sgwc_state_operational(ogs_fsm_t *s, sgwc_event_t *e)
         break;
 
     case SGWC_EVT_S11_MESSAGE:
+        ogs_debug("***Inside SGWC_EVT_S11_MESSAGE*** ");
         ogs_assert(e);
         recvbuf = e->pkbuf;
         ogs_assert(recvbuf);
