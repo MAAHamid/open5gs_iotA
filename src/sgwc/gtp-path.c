@@ -19,6 +19,8 @@
 
 #include "gtp-path.h"
 
+ogs_sockaddr_t *afrom;
+
 static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
 {
     sgwc_event_t *e = NULL;
@@ -75,7 +77,6 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
      *   "Context not found".
      */
      
-    ogs_sockaddr_t *afrom;
     gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &from);
     
     char *ip1 = OGS_ADDR(&from, frombuf);
