@@ -103,6 +103,7 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
                 memset(&ip_object, 0, sizeof(ogs_ip_t));
                 ogs_ipv4_from_string(&ip_object.addr, ip_string);
                 ip_object.ipv4 = 1;
+                ip_object.len = OGS_IPV4_LEN;
                 gnode = ogs_gtp_node_find_by_ip(&sgwc_self()->pgw_s5c_list, &ip_object);
                 // gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->pgw_s5c_list, &afrom);
                 if (gnode) {
