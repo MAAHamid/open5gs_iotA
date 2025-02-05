@@ -96,9 +96,9 @@ static void _gtpv2_c_recv_cb(short when, ogs_socket_t fd, void *data)
         gnode = ogs_gtp_node_find_by_addr(&sgwc_self()->mme_s11_list, &from);
         if (!gnode) {
             char *ip = OGS_ADDR(&from, frombuf);
-            if(strcmp(ip, "10.131.2.58")== 0){
+            if(strcmp(ip, "10.131.2.101")== 0){
                 ogs_debug("***CANOT Find gnode in MME List ***,inside IP");
-                const char *ip_string = "10.131.2.58";
+                const char *ip_string = "10.131.2.101";
                 ogs_ip_t ip_object;
                 memset(&ip_object, 0, sizeof(ogs_ip_t));
                 ogs_ipv4_from_string(&ip_object.addr, ip_string);
